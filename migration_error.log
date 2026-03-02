@@ -1,0 +1,131 @@
+
+   INFO  Running migrations.  
+
+  2026_02_28_221007_update_users_table_and_create_app_tables  11.55ms FAIL
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[HY000]: General error: 1 cannot drop PRIMARY KEY column: "id" (Connection: sqlite, Database: /Users/jervi/Desktop/chat-laravel/database/database.sqlite, SQL: alter table "users" drop column "id")
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+    834▕             $exceptionType = $this->isUniqueConstraintError($e)
+    835▕                 ? UniqueConstraintViolationException::class
+    836▕                 : QueryException::class;
+    837▕ 
+  ➜ 838▕             throw new $exceptionType(
+    839▕                 $this->getNameWithReadWriteType(),
+    840▕                 $query,
+    841▕                 $this->prepareBindings($bindings),
+    842▕                 $e,
+
+  1   vendor/laravel/framework/src/Illuminate/Database/Connection.php:578
+      PDOException::("SQLSTATE[HY000]: General error: 1 cannot drop PRIMARY KEY column: "id"")
+
+  2   vendor/laravel/framework/src/Illuminate/Database/Connection.php:578
+      PDO::prepare("alter table "users" drop column "id"")
+
+  3   vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+      Illuminate\Database\Connection::{closure:Illuminate\Database\Connection::statement():573}("alter table "users" drop column "id"", [])
+
+  4   vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+      Illuminate\Database\Connection::runQueryCallback("alter table "users" drop column "id"", [], Object(Closure))
+
+  5   vendor/laravel/framework/src/Illuminate/Database/Connection.php:573
+      Illuminate\Database\Connection::run("alter table "users" drop column "id"", [], Object(Closure))
+
+  6   vendor/laravel/framework/src/Illuminate/Database/Schema/Blueprint.php:121
+      Illuminate\Database\Connection::statement("alter table "users" drop column "id"")
+
+  7   vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php:686
+      Illuminate\Database\Schema\Blueprint::build()
+
+  8   vendor/laravel/framework/src/Illuminate/Database/Schema/Builder.php:494
+      Illuminate\Database\Schema\Builder::build(Object(Illuminate\Database\Schema\Blueprint))
+
+  9   vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:363
+      Illuminate\Database\Schema\Builder::table("users", Object(Closure))
+
+  10  database/migrations/2026_02_28_221007_update_users_table_and_create_app_tables.php:15
+      Illuminate\Support\Facades\Facade::__callStatic("table")
+
+  11  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:517
+      Illuminate\Database\Migrations\Migration@anonymous\/Users/jervi/Desktop/chat-laravel/database/migrations/2026_02_28_221007_update_users_table_and_create_app_tables.php:7$106::up()
+
+  12  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:442
+      Illuminate\Database\Migrations\Migrator::runMethod(Object(Illuminate\Database\SQLiteConnection), Object(Illuminate\Database\Migrations\Migration@anonymous\/Users/jervi/Desktop/chat-laravel/database/migrations/2026_02_28_221007_update_users_table_and_create_app_tables.php:7$106), "up")
+
+  13  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:451
+      Illuminate\Database\Migrations\Migrator::{closure:Illuminate\Database\Migrations\Migrator::runMigration():438}()
+
+  14  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:253
+      Illuminate\Database\Migrations\Migrator::runMigration(Object(Illuminate\Database\Migrations\Migration@anonymous\/Users/jervi/Desktop/chat-laravel/database/migrations/2026_02_28_221007_update_users_table_and_create_app_tables.php:7$106), "up")
+
+  15  vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php:41
+      Illuminate\Database\Migrations\Migrator::{closure:Illuminate\Database\Migrations\Migrator::runUp():253}()
+
+  16  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:814
+      Illuminate\Console\View\Components\Task::render("2026_02_28_221007_update_users_table_and_create_app_tables", Object(Closure))
+
+  17  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:253
+      Illuminate\Database\Migrations\Migrator::write("Illuminate\Console\View\Components\Task", "2026_02_28_221007_update_users_table_and_create_app_tables", Object(Closure))
+
+  18  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:211
+      Illuminate\Database\Migrations\Migrator::runUp("/Users/jervi/Desktop/chat-laravel/database/migrations/2026_02_28_221007_update_users_table_and_create_app_tables.php")
+
+  19  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:138
+      Illuminate\Database\Migrations\Migrator::runPending([])
+
+  20  vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php:116
+      Illuminate\Database\Migrations\Migrator::run([])
+
+  21  vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php:671
+      Illuminate\Database\Console\Migrations\MigrateCommand::{closure:Illuminate\Database\Console\Migrations\MigrateCommand::runMigrations():109}()
+
+  22  vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php:109
+      Illuminate\Database\Migrations\Migrator::usingConnection(Object(Closure))
+
+  23  vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php:88
+      Illuminate\Database\Console\Migrations\MigrateCommand::runMigrations()
+
+  24  vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php:36
+      Illuminate\Database\Console\Migrations\MigrateCommand::handle()
+
+  25  vendor/laravel/framework/src/Illuminate/Container/Util.php:43
+      Illuminate\Container\BoundMethod::{closure:Illuminate\Container\BoundMethod::call():35}()
+
+  26  vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php:96
+      Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+
+  27  vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php:35
+      Illuminate\Container\BoundMethod::callBoundMethod(Object(Illuminate\Foundation\Application), Object(Closure))
+
+  28  vendor/laravel/framework/src/Illuminate/Container/Container.php:799
+      Illuminate\Container\BoundMethod::call(Object(Illuminate\Foundation\Application), [])
+
+  29  vendor/laravel/framework/src/Illuminate/Console/Command.php:211
+      Illuminate\Container\Container::call()
+
+  30  vendor/symfony/console/Command/Command.php:341
+      Illuminate\Console\Command::execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Illuminate\Console\OutputStyle))
+
+  31  vendor/laravel/framework/src/Illuminate/Console/Command.php:180
+      Symfony\Component\Console\Command\Command::run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Illuminate\Console\OutputStyle))
+
+  32  vendor/symfony/console/Application.php:1117
+      Illuminate\Console\Command::run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+
+  33  vendor/symfony/console/Application.php:356
+      Symfony\Component\Console\Application::doRunCommand(Object(Illuminate\Database\Console\Migrations\MigrateCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+
+  34  vendor/symfony/console/Application.php:195
+      Symfony\Component\Console\Application::doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+
+  35  vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:198
+      Symfony\Component\Console\Application::run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+
+  36  vendor/laravel/framework/src/Illuminate/Foundation/Application.php:1235
+      Illuminate\Foundation\Console\Kernel::handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+
+  37  artisan:16
+      Illuminate\Foundation\Application::handleCommand(Object(Symfony\Component\Console\Input\ArgvInput))
+

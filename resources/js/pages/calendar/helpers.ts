@@ -1,0 +1,109 @@
+import {
+  startOfMonth,
+  endOfMonth,
+  format,
+  parseISO,
+  startOfDay,
+  isSameDay,
+  isSameMonth,
+  addMonths,
+  subMonths,
+} from 'date-fns';
+import { IEvent } from './types';
+
+interface ICalendarCell {
+  day: number;
+  currentMonth: boolean;
+  date: Date;
+}
+
+export function rangeText(date: Date): string {
+  const start = startOfMonth(date);
+  const end = endOfMonth(date);
+  return `${format(start, 'MMM d, yyyy')} - ${format(end, 'MMM d, yyyy')}`;
+}
+
+export function navigateDate(date: Date, direction: 'previous' | 'next'): Date {
+  return direction === 'next' ? addMonths(date, 1) : subMonths(date, 1);
+}
+
+export function getEventsCount(events: IEvent[], date: Date): number {
+  return events.filter((event) => isSameMonth(new Date(event.endDate), date)).length;
+}
+
+export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
+  const currentYear = selectedDate.getFullYear();
+  const currentMonth = selectedDate.getMonth();
+  const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
+  const getFirstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
+  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+  const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
+  const daysInPrevMonth = getDaysInMonth(currentYear, currentMonth - 1);
+  const totalDays = firstDayOfMonth + daysInMonth;
+
+  const prevMonthCells = Array.from({ length: firstDayOfMonth }, (_, i) => ({
+    day: daysInPrevMonth - firstDayOfMonth + i + 1,
+    currentMonth: false,
+    date: new Date(currentYear, currentMonth - 1, daysInPrevMonth - firstDayOfMonth + i + 1),
+  }));
+  const currentMonthCells = Array.from({ length: daysInMonth }, (_, i) => ({
+    day: i + 1,
+    currentMonth: true,
+    date: new Date(currentYear, currentMonth, i + 1),
+  }));
+  const nextMonthCells = Array.from({ length: (7 - (totalDays % 7)) % 7 }, (_, i) => ({
+    day: i + 1,
+    currentMonth: false,
+    date: new Date(currentYear, currentMonth + 1, i + 1),
+  }));
+
+  return [...prevMonthCells, ...currentMonthCells, ...nextMonthCells];
+}
+
+export function calculateMonthEventPositions(
+  _multiDayEvents: IEvent[],
+  singleDayEvents: IEvent[],
+  _selectedDate: Date
+): Record<string, number> {
+  const positions: Record<string, number> = {};
+  const eventsByDate: Record<string, IEvent[]> = {};
+
+  singleDayEvents.forEach((event) => {
+    if (!event.id || !event.endDate) return;
+    const dateKey = startOfDay(parseISO(event.endDate)).toISOString();
+    if (!eventsByDate[dateKey]) eventsByDate[dateKey] = [];
+    eventsByDate[dateKey].push(event);
+  });
+
+  Object.keys(eventsByDate).forEach((dateKey) => {
+    const events = eventsByDate[dateKey];
+    events.forEach((event, index) => {
+      positions[event.id] = index;
+    });
+  });
+
+  return positions;
+}
+
+export function getMonthCellEvents(
+  cellDate: Date,
+  events: IEvent[],
+  eventPositions: Record<string, number>
+) {
+  return events
+    .filter((event) => {
+      if (!event.endDate) return false;
+      try {
+        const eventDate = startOfDay(parseISO(event.endDate));
+        const cellDateStart = startOfDay(cellDate);
+        return isSameDay(cellDateStart, eventDate);
+      } catch {
+        return false;
+      }
+    })
+    .map((event) => ({
+      ...event,
+      position: eventPositions[event.id] ?? 0,
+    }))
+    .sort((a, b) => a.position - b.position);
+}

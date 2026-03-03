@@ -1,6 +1,5 @@
 import { PlusIcon } from '@/components/icons';
 import { SidebarHistory } from './sidebar-history';
-import { SidebarUserNav } from './sidebar-user-nav';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -64,9 +63,9 @@ export function AppSidebar({ user }: { user: any | undefined }) {
             {[
               { name: 'Split', icon: <SplitSquareHorizontalIcon />, url: '/split' },
               { name: 'Split v2', icon: <SplitSquareHorizontalIcon />, url: '/split-2' },
+              { name: 'Todo List', icon: <ListIcon />, url: '/todo-list' },
               { name: 'Kanban', icon: <KanbanSquareIcon />, url: '/kanban' },
               { name: 'Calendar', icon: <CalendarIcon />, url: '/calendar' },
-              { name: 'Todo List', icon: <ListIcon />, url: '/todo-list' },
             ].map((item, index) => (
               <React.Fragment key={index}>
                 <SidebarMenuButton asChild className="mb-1" isActive={currentPath === item.url}>

@@ -10,10 +10,12 @@ import { toast } from 'sonner';
 import { debounce } from 'lodash';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
+import { echo } from '@laravel/echo-react';
 import { MinimalTiptapEditor } from '@/components/minimal-tiptap';
 import ChatLayout from '@/layouts/chat-layout/layout';
 import GenerateScriptsController from '@/actions/App/Http/Controllers/Split/GenerateScriptsController';
 import SaveScriptController from '@/actions/App/Http/Controllers/Split/SaveScriptController';
+import { Loader2 } from 'lucide-react';
 
 const maxCharacter = 500;
 const ITEMS_PER_PAGE = 5;
@@ -91,8 +93,47 @@ export default function SplitIndex({
     }
   }, [form]);
 
-  // Echo listener removed as generation is now synchronous
+  // Echo listener for background generation
+  useEffect(() => {
+    if (typeof window === 'undefined' || !userId) return;
 
+    let e;
+    try {
+      e = echo();
+    } catch {
+      return;
+    }
+
+    if (!e) return;
+
+    const channel = e.private(`split.${userId}`);
+
+    channel.listen('SplitScriptsGenerated', (e: { title: string, scripts: any[], usedModelId: string, tokenUsage: any }) => {
+      setIsLoading(false);
+      setScriptTitle(e.title || 'Generated Scripts');
+
+      const generatedScripts = e.scripts.map((script: any) => ({
+        ...script,
+        content: typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(script.content) : script.content,
+      }));
+
+      setScripts(generatedScripts);
+      setValidated(new Array(generatedScripts.length).fill(false));
+      setTokenUsage(e.tokenUsage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 });
+      setUsedModelId(e.usedModelId || null);
+      toast.success('Scripts generated successfully!');
+    });
+
+    channel.listen('SplitScriptsFailed', (e: { error: string }) => {
+      setIsLoading(false);
+      setError(e.error || 'Failed to generate scripts');
+      toast.error('Failed to generate scripts');
+    });
+
+    return () => {
+      e.leave(`split.${userId}`);
+    };
+  }, [userId]);
 
   const saveUserPromptToLocalStorage = debounce((prompt: string) => {
     if (prompt.trim() && prompt.length <= maxCharacter) {
@@ -158,25 +199,19 @@ export default function SplitIndex({
 
     try {
       const response = await axios.post(GenerateScriptsController.url(), data);
-      const e = response.data;
 
-      setIsLoading(false);
-      setScriptTitle(e.title || 'Generated Scripts');
-
-      const generatedScripts = e.scripts.map((script: any) => ({
-        ...script,
-        content: typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(script.content) : script.content,
-      }));
-
-      setScripts(generatedScripts);
-      setValidated(new Array(generatedScripts.length).fill(false));
-      setTokenUsage(e.tokenUsage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 });
-      setUsedModelId(e.usedModelId || null);
-      toast.success('Scripts generated successfully!');
+      if (response.data.status === 'started') {
+        toast.info('Script generation started...');
+        // Keep isLoading true, the Echo listener will handle completion
+      } else {
+        // Fallback for unexpected response structure
+        setIsLoading(false);
+        toast.error('Unexpected response from server');
+      }
     } catch (err: any) {
       setIsLoading(false);
-      setError(err.response?.data?.error || err.message || 'Failed to generate scripts');
-      toast.error('Failed to generate scripts');
+      setError(err.response?.data?.error || err.message || 'Failed to start script generation');
+      toast.error('Failed to start script generation');
     }
 
   };
@@ -369,7 +404,12 @@ export default function SplitIndex({
               <h2 className="text-2xl font-bold mb-4">Generated Wait Scripts</h2>
               <div className="space-y-4">
                 {isLoading ? (
-                  <p className="text-gray-500 dark:text-gray-400">Generating scripts, this is happening in real-time...</p>
+                  <div className="mt-10 flex items-center justify-center gap-4 rounded-xl border border-dashed p-10">
+                    <p className="animate-pulse text-muted-foreground">
+                      Generating scripts...
+                    </p>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  </div>
                 ) : paginatedScripts.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400">
                     No scripts generated yet. Fill out the form and click &quot;Generate Scripts&quot;.

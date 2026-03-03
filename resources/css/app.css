@@ -140,4 +140,32 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    html {
+        font-family: tajawal, sans-serif;
+    }
+
+    .latin-text {
+        font-family: inter, sans-serif;
+        line-height: 1.5;
+    }
+
+    .arabic-text {
+        font-family: tajawal, sans-serif;
+        line-height: 1.4;
+    }
+
+    @font-face {
+        font-family: "geist";
+        font-style: normal;
+        font-weight: 100 900;
+        src: url(/fonts/geist.woff2) format("woff2");
+    }
+
+    @font-face {
+        font-family: "geist-mono";
+        font-style: normal;
+        font-weight: 100 900;
+        src: url(/fonts/geist-mono.woff2) format("woff2");
+    }
 }

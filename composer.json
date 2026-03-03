@@ -20,6 +20,7 @@
         "laravel/telescope": "^5.18",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
+        "opcodesio/log-viewer": "^3.23",
         "openai-php/laravel": "^0.18.0"
     },
     "require-dev": {

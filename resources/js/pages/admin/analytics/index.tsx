@@ -8,26 +8,12 @@ const breadcrumbs = [
   { title: 'Analytics', href: '/dr-admin/analytics' },
 ];
 
-const userGrowthData = [
-  { month: 'Jan', users: 120 },
-  { month: 'Feb', users: 200 },
-  { month: 'Mar', users: 340 },
-  { month: 'Apr', users: 500 },
-  { month: 'May', users: 750 },
-  { month: 'Jun', users: 1000 },
-];
+interface AnalyticsIndexProps {
+  userGrowthData: { month: string; users: number }[];
+  chatActivityData: { day: string; messages: number }[];
+}
 
-const chatActivityData = [
-  { day: 'Mon', messages: 1500 },
-  { day: 'Tue', messages: 2300 },
-  { day: 'Wed', messages: 3400 },
-  { day: 'Thu', messages: 2100 },
-  { day: 'Fri', messages: 4500 },
-  { day: 'Sat', messages: 1200 },
-  { day: 'Sun', messages: 900 },
-];
-
-export default function AnalyticsIndex() {
+export default function AnalyticsIndex({ userGrowthData, chatActivityData }: AnalyticsIndexProps) {
   return (
     <AdminLayout breadcrumbs={breadcrumbs}>
       <Head title="Analytics" />

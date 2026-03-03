@@ -16,3 +16,7 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
 Broadcast::channel('split.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('split2.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
+});

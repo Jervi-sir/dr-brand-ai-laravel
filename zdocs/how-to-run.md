@@ -10,6 +10,8 @@ php artisan reverb:start --port 6081
 
 php artisan queue:work
 
+php artisan config:clear
+php artisan queue:clear
 
 ### pm2 
 sudo npm install -g pm2

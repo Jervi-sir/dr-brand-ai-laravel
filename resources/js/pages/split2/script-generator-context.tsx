@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { usePage } from '@inertiajs/react';
+import { echo } from '@laravel/echo-react';
 import PromptHistoryController from '@/actions/App/Http/Controllers/Split2/PromptHistoryController';
 import DeletePromptHistoryController from '@/actions/App/Http/Controllers/Split2/DeletePromptHistoryController';
 import GenerateSubPillarsController from '@/actions/App/Http/Controllers/Split2/GenerateSubPillarsController';
@@ -58,6 +60,9 @@ interface ScriptGeneratorContextType {
 const ScriptGeneratorContext = createContext<ScriptGeneratorContextType | undefined>(undefined);
 
 export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNode }) => {
+  const { auth } = usePage<any>().props;
+  const userId = auth?.user?.id;
+
   const [userPrompt, setUserPrompt] = useState<string>('');
   const [contentPillar, setContentPillar] = useState<string>('');
   const [clientPersona, setClientPersona] = useState<string>('');
@@ -81,6 +86,69 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
       toast.error('Failed to load prompt history');
     }
   }, []);
+
+  // Echo listener for background generation
+  useEffect(() => {
+    if (typeof window === 'undefined' || !userId) return;
+
+    let e;
+    try {
+      e = echo();
+    } catch {
+      return;
+    }
+
+    if (!e) return;
+
+    const channelName = `split2.${userId}`;
+    console.log(`[Split2] Subscribing to channel: ${channelName}`);
+
+    const channel = e.private(channelName);
+
+    channel.on('pusher:subscription_succeeded', () => {
+      console.log(`[Split2] Successfully subscribed to ${channelName}`);
+    });
+
+    channel.on('pusher:subscription_error', (status: any) => {
+      console.error(`[Split2] Subscription error for ${channelName}:`, status);
+      toast.error('Real-time connection failed. Please refresh.');
+    });
+
+    channel.listen('.Split2SubPillarsGenerated', (e: { contentPillar: string, clientPersona: string, subPillars: string[] }) => {
+      console.log('[Split2] Received Split2SubPillarsGenerated', e);
+      setIsLoadingSubPillars(false);
+      setContentPillar(e.contentPillar);
+      setClientPersona(e.clientPersona);
+      setSubPillars(e.subPillars.map((sp: string) => ({ value: sp, label: sp })));
+      setSelectedSubPillars([]);
+      toast.success('Sub-pillars generated successfully');
+    });
+
+    channel.listen('.Split2ScriptsGenerated', (e: { scripts: any[], historyId: number }) => {
+      console.log('[Split2] Received Split2ScriptsGenerated', e);
+      setIsLoadingScripts(false);
+      setScripts(e.scripts);
+      setValidated(new Array(e.scripts.length).fill(false));
+      setHistoryId(String(e.historyId));
+      loadPromptHistory();
+      toast.success('Scripts generated successfully');
+    });
+
+    channel.listen('.Split2ErrorReceived', (e: { error: string, type: string }) => {
+      console.error('[Split2] Received Split2ErrorReceived', e);
+      if (e.type === 'sub_pillars') {
+        setIsLoadingSubPillars(false);
+      } else {
+        setIsLoadingScripts(false);
+      }
+      toast.error(e.error || 'Failed to generate');
+    });
+
+    return () => {
+      console.log(`[Split2] Leaving channel: ${channelName}`);
+      e.leave(channelName);
+    };
+  }, [userId, loadPromptHistory]);
 
   useEffect(() => {
     loadPromptHistory();
@@ -118,62 +186,27 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
       }
       setIsLoadingSubPillars(true);
       try {
-        const response = await axios.post(GenerateSubPillarsController.url(), { userPrompt });
-        const data = response.data;
-        setContentPillar(data.contentPillar);
-        setClientPersona(data.clientPersona);
-        setSubPillars(data.subPillars);
-        setSelectedSubPillars([]);
+        const response = await axios.post(GenerateSubPillarsController.url(), {
+          userPrompt,
+          is_automatic: isAutomatic
+        });
 
-        if (isAutomatic) {
-          const selected = data.subPillars.slice(0, 5).map((sp: { value: string }) => sp.value);
-          setSelectedSubPillars(selected);
-          const hooksList = [
-            'fix-a-problem',
-            'quick-wins',
-            'reactions-reviews',
-            'personal-advice',
-            'step-by-step-guides',
-            'curiosity-surprises',
-            'direct-targeting',
-          ];
-          setHookType(hooksList);
+        if (response.data.status === 'started') {
+          toast.info('Sub-pillar generation started...');
+          // Keep isLoadingSubPillars true, Echo handles results
 
-          try {
-            const scriptRes = await axios.post(GenerateAutomaticScriptController.url(), {
-              userPrompt,
-              clientPersona: data.clientPersona,
-              contentPillar: data.contentPillar,
-              subPillars: data.subPillars,
-              chosenSubPillars: selected.map(
-                (value: string) => data.subPillars.find((sp: { value: string }) => sp.value === value)?.label || value
-              ),
-              hookType: hooksList,
-            });
-            const scriptData = scriptRes.data;
-            setScripts(scriptData.scripts);
-            setValidated(new Array(scriptData.scripts.length).fill(false));
-            setHistoryId(scriptData.historyId);
-            await loadPromptHistory();
-            toast.success('Scripts generated successfully');
-          } catch (scriptErr: any) {
-            throw new Error(scriptErr.response?.data?.error || 'Failed to generate scripts');
-          }
-        } else {
-          if (data.subPillars.length < 25) {
-            toast.error(`Generated ${data.subPillars.length} sub-pillars instead of 25.`);
-          } else {
-            toast.success('Sub-pillars generated successfully');
+          if (isAutomatic) {
+            setIsLoadingScripts(true);
+            toast.info('Automatic script generation will follow...');
           }
         }
       } catch (error: any) {
+        setIsLoadingSubPillars(false);
         console.error('Error generating sub-pillars:', error);
         toast.error(error.message || 'Failed to generate sub-pillars');
-      } finally {
-        setIsLoadingSubPillars(false);
       }
     },
-    [userPrompt, loadPromptHistory]
+    [userPrompt]
   );
 
   const generateScripts = useCallback(async () => {
@@ -206,19 +239,17 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
         ),
         hookType,
       });
-      const data = response.data;
-      setScripts(data.scripts);
-      setValidated(new Array(data.scripts.length).fill(false));
-      setHistoryId(data.historyId);
-      await loadPromptHistory();
-      toast.success('Scripts generated successfully');
+
+      if (response.data.status === 'started') {
+        toast.info('Script generation started...');
+        // Keep isLoadingScripts true
+      }
     } catch (error: any) {
+      setIsLoadingScripts(false);
       console.error('Error generating scripts:', error);
       toast.error(`Failed to generate scripts: ${error.response?.data?.error || error.message}`);
-    } finally {
-      setIsLoadingScripts(false);
     }
-  }, [userPrompt, clientPersona, contentPillar, subPillars, selectedSubPillars, hookType, loadPromptHistory]);
+  }, [userPrompt, clientPersona, contentPillar, subPillars, selectedSubPillars, hookType]);
 
   const validateScript = useCallback(
     async (scriptIndex: number, historyId: string) => {
@@ -242,12 +273,12 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
           historyId,
         });
 
-        setScripts((prev) => {
+        setScripts((prev: any[]) => {
           const newScripts = [...prev];
           newScripts[scriptIndex] = { ...newScripts[scriptIndex], isValidated: true };
           return newScripts;
         });
-        setValidated((prev) => {
+        setValidated((prev: boolean[]) => {
           const newValidated = [...prev];
           newValidated[scriptIndex] = true;
           return newValidated;
@@ -263,8 +294,8 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
   );
 
   const handleDelete = (scriptIndex: number) => {
-    setScripts((prev) => prev.filter((_, i) => i !== scriptIndex));
-    setValidated((prev) => prev.filter((_, i) => i !== scriptIndex));
+    setScripts((prev: any[]) => prev.filter((_, i) => i !== scriptIndex));
+    setValidated((prev: boolean[]) => prev.filter((_, i) => i !== scriptIndex));
   };
 
   return (

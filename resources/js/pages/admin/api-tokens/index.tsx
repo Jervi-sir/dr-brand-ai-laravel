@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 import admin from '@/routes/admin';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'API Tokens', href: '/admin/api-tokens' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'API Tokens', href: '/dr-admin/api-tokens' },
 ];
 
 interface Props {

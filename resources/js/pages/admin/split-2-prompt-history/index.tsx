@@ -4,8 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AdminLayout from '@/layouts/admin-layout/admin-layout';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Split 2 Prompt History', href: '/admin/split-2-prompt-history' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Split 2 Prompt History', href: '/dr-admin/split-2-prompt-history' },
 ];
 
 export default function Split2PromptHistoryIndex() {

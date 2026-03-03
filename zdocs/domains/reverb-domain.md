@@ -3,6 +3,10 @@
 sudo nano /etc/nginx/sites-available/dr-ai-reverb.jervi.dev
 
 ```
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
 server {
     server_name dr-ai-reverb.jervi.dev;
 
@@ -54,7 +58,8 @@ server {
 }
 ```
 sudo ln -s /etc/nginx/sites-available/dr-ai-reverb.jervi.dev /etc/nginx/sites-enabled/ 
-sudo nginx -t sudo systemctl restart nginx 
+sudo nginx -t 
+sudo systemctl restart nginx 
 sudo certbot --nginx -d dr-ai-reverb.jervi.dev 
 sudo nano /etc/nginx/sites-available/dr-ai-reverb.jervi.dev
 

@@ -24,8 +24,8 @@ interface Props {
 }
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Google Auth Settings', href: '/admin/google-settings' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Google Auth Settings', href: '/dr-admin/google-settings' },
 ];
 
 export default function GoogleSettingsIndex({ settings }: Props) {
@@ -181,6 +181,6 @@ export default function GoogleSettingsIndex({ settings }: Props) {
 
 // @ts-ignore
 function route(name: string) {
-  if (name === 'admin.google-settings.update') return '/admin/google-settings';
+  if (name === 'admin.google-settings.update') return '/dr-admin/google-settings';
   return '';
 }

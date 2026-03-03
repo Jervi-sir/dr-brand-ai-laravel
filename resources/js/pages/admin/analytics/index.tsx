@@ -4,8 +4,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } fro
 import AdminLayout from '@/layouts/admin-layout/admin-layout';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Analytics', href: '/admin/analytics' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Analytics', href: '/dr-admin/analytics' },
 ];
 
 const userGrowthData = [

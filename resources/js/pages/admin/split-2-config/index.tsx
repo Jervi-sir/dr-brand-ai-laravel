@@ -11,8 +11,8 @@ import { AiModel, PromptHistory } from '@/types/models';
 import Update from '@/actions/App/Http/Controllers/Admin/Split2ConfigController';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Split 2 Config', href: '/admin/split-2-config' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Split 2 Config', href: '/dr-admin/split-2-config' },
 ];
 
 interface Props {
@@ -90,7 +90,7 @@ export default function Split2ConfigIndex({ models, currentConfig, history }: Pr
                 <CardDescription>Recent prompt executions for Split 2.</CardDescription>
               </div>
               <Button variant="outline" asChild>
-                <a href="/admin/split-2-prompt-history">View All</a>
+                <a href="/dr-admin/split-2-prompt-history">View All</a>
               </Button>
             </CardHeader>
             <CardContent>

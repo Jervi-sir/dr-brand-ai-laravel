@@ -59,7 +59,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: 'Google Settings',
-    href: '/admin/google-settings',
+    href: '/dr-admin/google-settings',
     icon: Settings,
   },
 ];

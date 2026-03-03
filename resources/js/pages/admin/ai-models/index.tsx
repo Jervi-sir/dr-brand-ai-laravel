@@ -17,8 +17,8 @@ import { toast } from 'sonner';
 import * as AiModelsRoutes from '@/routes/admin/ai-models';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'AI Models', href: '/admin/ai-models' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'AI Models', href: '/dr-admin/ai-models' },
 ];
 
 interface Props {

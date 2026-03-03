@@ -5,13 +5,13 @@ use App\Http\Controllers\Admin\AiPromptHistoryController;
 use App\Http\Controllers\Admin\AiUsageController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ApiTokenController;
+use App\Http\Controllers\Admin\GoogleSettingController;
 use App\Http\Controllers\Admin\Split2ConfigController;
 use App\Http\Controllers\Admin\UnlockingCodeController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\GoogleSettingController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('dr-admin')->name('admin.')->group(function () {
     Route::resource('api-tokens', ApiTokenController::class);
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');

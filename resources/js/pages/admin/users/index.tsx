@@ -10,8 +10,8 @@ import { toast } from 'sonner';
 import * as UsersRoutes from '@/routes/admin/users';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Users', href: '/admin/users' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Users', href: '/dr-admin/users' },
 ];
 
 interface Props {
@@ -44,7 +44,7 @@ export default function UsersIndex({ users, filters }: Props) {
     if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       // Wayfinder might not have auto-generated the TS for the new DELETE route yet in the exact way I expect
       // but wayfinder:generate was run. Let's try to use the route name if possible or just use router.delete directly.
-      router.delete(`/admin/users/${id}`, {
+      router.delete(`/dr-admin/users/${id}`, {
         onSuccess: () => toast.success('User deleted successfully'),
       });
     }

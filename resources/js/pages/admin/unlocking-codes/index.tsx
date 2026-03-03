@@ -14,8 +14,8 @@ import { toast } from 'sonner';
 import * as UnlockingCodesRoutes from '@/routes/admin/unlocking-codes';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'Unlocking Codes', href: '/admin/unlocking-codes' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'Unlocking Codes', href: '/dr-admin/unlocking-codes' },
 ];
 
 interface Props {

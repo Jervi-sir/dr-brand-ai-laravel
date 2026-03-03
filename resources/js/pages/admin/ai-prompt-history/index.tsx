@@ -10,8 +10,8 @@ import { useState } from 'react';
 import * as PromptHistoryRoutes from '@/routes/admin/ai-prompt-history';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'AI Prompt History', href: '/admin/ai-prompt-history' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'AI Prompt History', href: '/dr-admin/ai-prompt-history' },
 ];
 
 interface Props {

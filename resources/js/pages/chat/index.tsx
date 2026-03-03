@@ -91,7 +91,6 @@ export default function Page() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (initialModelID) {
@@ -111,11 +110,6 @@ export default function Page() {
   useEffect(() => {
     adjustTextareaHeight();
   }, [input, adjustTextareaHeight]);
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   const handleStop = useCallback(() => {
     if (abortControllerRef.current) {

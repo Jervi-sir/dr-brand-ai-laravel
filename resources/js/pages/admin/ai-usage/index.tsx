@@ -10,8 +10,8 @@ import { useState } from 'react';
 import { index as AiUsageIndexRoute } from '@/routes/admin/ai-usage';
 
 const breadcrumbs = [
-  { title: 'Admin', href: '/admin/users' },
-  { title: 'AI Usage', href: '/admin/ai-usage' },
+  { title: 'Admin', href: '/dr-admin/users' },
+  { title: 'AI Usage', href: '/dr-admin/ai-usage' },
 ];
 
 interface Props {

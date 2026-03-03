@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Split1Config;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -20,3 +21,7 @@ require __DIR__ . '/web/todo-list.php';
 require __DIR__ . '/web/kanban.php';
 require __DIR__ . '/web/calendar.php';
 require __DIR__ . '/web/admin.php';
+
+Route::get('/1', function () {
+    dd(Split1Config::getSelectedModelName());
+});

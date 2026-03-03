@@ -40,4 +40,16 @@ class SplitPromptHistory extends Model
     {
         return $this->belongsTo(AiModel::class, 'model_id');
     }
+
+    /**
+     * Get the name of the currently selected model.
+     */
+    public static function getSelectedModelName(): ?string
+    {
+        $current = self::where('is_current', true)
+            ->with('ai_model')
+            ->first();
+
+        return $current?->model_code_name ?? $current?->ai_model?->name;
+    }
 }

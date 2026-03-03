@@ -28,4 +28,16 @@ class Split1Config extends Model
     {
         return $this->belongsTo(AiModel::class, 'model_id');
     }
+
+    /**
+     * Get the name of the currently active model.
+     */
+    public static function getSelectedModelName(): ?string
+    {
+        return self::where('is_active', true)
+            ->with('ai_model')
+            ->first()
+            ?->ai_model
+            ?->name;
+    }
 }

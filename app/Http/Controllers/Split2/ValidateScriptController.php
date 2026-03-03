@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Split2;
 
 use App\Http\Controllers\Controller;
+use App\Models\SplitPromptHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,6 +38,7 @@ class ValidateScriptController extends Controller
             'stage' => 'script',
             'created_at' => now(),
             'updated_at' => now(),
+            'model' => SplitPromptHistory::getSelectedModelName(),
         ]);
 
         return response()->json(['id' => $id]);

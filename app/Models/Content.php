@@ -25,6 +25,7 @@ class Content extends Model
         'stage',
         'scheduled_date',
         'deadline',
+        'model',
     ];
 
     /**

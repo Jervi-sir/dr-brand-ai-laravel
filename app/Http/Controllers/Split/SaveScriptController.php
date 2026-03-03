@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Split;
 
 use App\Http\Controllers\Controller;
+use App\Models\Split1Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +33,7 @@ class SaveScriptController extends Controller
             'stage' => $validated['stage'],
             'created_at' => now(),
             'updated_at' => now(),
+            'model' => Split1Config::getSelectedModelName(),
         ]);
 
         return response()->json(['success' => true, 'id' => $id]);

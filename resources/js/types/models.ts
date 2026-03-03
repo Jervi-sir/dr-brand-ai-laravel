@@ -69,10 +69,16 @@ export interface PromptHistory {
   id: number;
   model_id: number;
   prompt: string;
-  userEmail: string | null;
+  userEmail?: string | null;
+  user_email?: string | null;
   created_at: string;
   updated_at: string;
   ai_model?: AiModel;
+}
+
+export interface SplitPromptHistory extends PromptHistory {
+  model_code_name?: string | null;
+  is_current?: boolean;
 }
 
 export interface Code {

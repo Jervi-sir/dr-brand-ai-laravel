@@ -1,4 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,9 +30,21 @@ export default function Split2ConfigIndex({ models, currentConfig, history }: Pr
     prompt: currentConfig?.prompt || '',
   });
 
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  const toggleRow = (id: number) => {
+    const next = new Set(expandedRows);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setExpandedRows(next);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post(Update.url());
+    post(Update.update().url);
   };
 
   return (
@@ -100,31 +115,55 @@ export default function Split2ConfigIndex({ models, currentConfig, history }: Pr
                     <TableHead>Time</TableHead>
                     <TableHead>Model</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Prompt</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="text-xs">
-                        {new Date(item.created_at).toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {item.ai_model?.display_name || 'Deleted Model'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {item.id === currentConfig?.id && (
-                          <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20">
-                            Current
+                    <React.Fragment key={item.id}>
+                      <TableRow
+                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => toggleRow(item.id)}
+                      >
+                        <TableCell className="text-xs">
+                          {new Date(item.created_at).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {item.ai_model?.display_name || 'Deleted Model'}
                           </Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
+                        </TableCell>
+                        <TableCell>
+                          {item.id === currentConfig?.id && (
+                            <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20">
+                              Current
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            {expandedRows.has(item.id) ? (
+                              <ChevronDown className="h-4 w-4 rotate-180 transition-transform" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4 transition-transform" />
+                            )}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      {expandedRows.has(item.id) && (
+                        <TableRow className="bg-muted/30">
+                          <TableCell colSpan={4} className="p-3">
+                            <div className="rounded bg-muted p-3 font-mono text-[10px] whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
+                              {item.prompt}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
                   ))}
                   {history.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={3} className="h-24 text-center">
+                      <TableCell colSpan={4} className="h-24 text-center">
                         No history found.
                       </TableCell>
                     </TableRow>

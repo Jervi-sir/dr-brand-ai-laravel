@@ -53,6 +53,11 @@ const mainNavItems: NavItem[] = [
     icon: Lock,
   },
   {
+    title: 'Split 1 Config',
+    href: '/dr-admin/split-1-config',
+    icon: SplitIcon,
+  },
+  {
     title: 'Split 2 Config',
     href: admin.split2Config.index().url,
     icon: SplitIcon,

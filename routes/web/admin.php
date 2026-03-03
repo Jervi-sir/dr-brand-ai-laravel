@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AiUsageController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\GoogleSettingController;
+use App\Http\Controllers\Admin\Split1ConfigController;
 use App\Http\Controllers\Admin\Split2ConfigController;
 use App\Http\Controllers\Admin\UnlockingCodeController;
 use App\Http\Controllers\Admin\UserController;
@@ -28,6 +29,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('dr-admin')->name('admi
     Route::get('/split-2-config', [Split2ConfigController::class, 'index'])->name('split-2-config.index');
     Route::post('/split-2-config', [Split2ConfigController::class, 'update'])->name('split-2-config.update');
     Route::get('/split-2-prompt-history', [Split2ConfigController::class, 'history'])->name('split-2-prompt-history.index');
+
+    Route::get('/split-1-config', [Split1ConfigController::class, 'index'])->name('split-1-config.index');
+    Route::post('/split-1-config', [Split1ConfigController::class, 'update'])->name('split-1-config.update');
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 

@@ -10,7 +10,8 @@
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
         "lint:check": "eslint .",
-        "types:check": "tsc --noEmit"
+        "types:check": "tsc --noEmit",
+        "deploy": "npm run build && php artisan queue:clear && php artisan optimize:clear && php artisan config:clear && pm2 reload dr-ai-laravel && pm2 reload dr-ai-laravel-queue && pm2 reload dr-ai-laravel-reverb"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",

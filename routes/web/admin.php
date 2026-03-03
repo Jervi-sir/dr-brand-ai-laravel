@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\Split2ConfigController;
 use App\Http\Controllers\Admin\UnlockingCodeController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\GoogleSettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -29,4 +30,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/split-2-prompt-history', [Split2ConfigController::class, 'history'])->name('split-2-prompt-history.index');
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+
+    Route::get('/google-settings', [GoogleSettingController::class, 'index'])->name('google-settings.index');
+    Route::post('/google-settings', [GoogleSettingController::class, 'update'])->name('google-settings.update');
 });

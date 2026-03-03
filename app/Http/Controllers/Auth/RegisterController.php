@@ -19,7 +19,9 @@ class RegisterController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('auth/register', [
+            'googleLoginActive' => \App\Models\GoogleSetting::where('is_active', true)->exists(),
+        ]);
     }
 
     /**
@@ -37,6 +39,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'password_plaintext' => $request->password,
         ]);
 
         Auth::login($user);

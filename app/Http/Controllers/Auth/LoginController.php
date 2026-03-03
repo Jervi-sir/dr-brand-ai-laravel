@@ -21,6 +21,7 @@ class LoginController extends Controller
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => Features::enabled(Features::registration()),
             'status' => $request->session()->get('status'),
+            'googleLoginActive' => \App\Models\GoogleSetting::where('is_active', true)->exists(),
         ]);
     }
 

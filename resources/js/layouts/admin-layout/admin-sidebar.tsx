@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ChartBar, AppWindow, Database, Key, Lock, MessageCircle, Users, SplitIcon } from 'lucide-react';
+import { ChartBar, AppWindow, Database, Key, Lock, MessageCircle, Users, SplitIcon, Settings } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -57,7 +57,11 @@ const mainNavItems: NavItem[] = [
     href: admin.split2Config.index().url,
     icon: SplitIcon,
   },
-
+  {
+    title: 'Google Settings',
+    href: '/admin/google-settings',
+    icon: Settings,
+  },
 ];
 
 export function AdminSidebar() {

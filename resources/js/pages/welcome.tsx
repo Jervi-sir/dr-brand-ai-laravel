@@ -1,7 +1,8 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { dashboard, login, register } from '@/routes';
+import { login, register } from '@/routes';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import chat from '@/routes/chat';
 
 export default function Welcome({
     canRegister = true,
@@ -43,8 +44,8 @@ export default function Welcome({
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         {auth.user ? (
                             <Button asChild size="lg" className="rounded-full px-10 h-14 text-lg font-semibold shadow-2xl shadow-blue-500/25 hover:scale-105 active:scale-95 transition-all">
-                                <Link href={dashboard()}>
-                                    Enter Dashboard
+                                <Link href={chat.index().url}>
+                                    Enter Platform
                                     <ArrowRight className="ml-2 size-5" />
                                 </Link>
                             </Button>

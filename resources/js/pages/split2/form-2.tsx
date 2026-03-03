@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -36,6 +36,8 @@ export const Form2 = () => {
     mode,
   } = useScriptGenerator();
 
+  const [timer, setTimer] = useState(180);
+
   // @ts-ignore
   const form = useForm<FormData>({
     defaultValues: {
@@ -53,6 +55,24 @@ export const Form2 = () => {
       return { values: data, errors };
     },
   });
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoadingScripts && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (!isLoadingScripts) {
+      setTimer(180);
+    }
+    return () => clearInterval(interval);
+  }, [isLoadingScripts, timer]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   if (mode === 'automatic') {
     return null;
@@ -91,6 +111,7 @@ export const Form2 = () => {
               <FormLabel>Sub-Pillars</FormLabel>
               <FormControl>
                 <MultiSelect
+                  // @ts-ignore
                   options={subPillars}
                   defaultValue={selectedSubPillars}
                   onValueChange={(values) => {
@@ -134,9 +155,10 @@ export const Form2 = () => {
           disabled={isLoadingScripts || isFormDisabled}
           className="w-full text-white"
         >
-          {isLoadingScripts ? 'Generating...' : 'Generate Scripts'}
+          {isLoadingScripts ? `Generating... (${formatTime(timer)})` : 'Generate Scripts'}
         </Button>
       </form>
     </Form>
   );
 };
+

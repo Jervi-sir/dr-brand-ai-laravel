@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { usePage } from '@inertiajs/react';
@@ -77,6 +77,12 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
   const [historyId, setHistoryId] = useState<string>('');
   const [mode, setMode] = useState<'automatic' | 'custom'>('automatic');
 
+  // Ref to track the latest mode for Echo listeners
+  const modeRef = useRef(mode);
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
   const loadPromptHistory = useCallback(async () => {
     try {
       const response = await axios.get(PromptHistoryController.url());
@@ -120,7 +126,14 @@ export const ScriptGeneratorProvider = ({ children }: { children: React.ReactNod
       setContentPillar(e.contentPillar);
       setClientPersona(e.clientPersona);
       setSubPillars(e.subPillars.map((sp: string) => ({ value: sp, label: sp })));
-      setSelectedSubPillars([]);
+
+      // In automatic mode, select the first 5 sub-pillars to match backend logic
+      if (modeRef.current === 'automatic') {
+        setSelectedSubPillars(e.subPillars.slice(0, 5));
+      } else {
+        setSelectedSubPillars([]);
+      }
+
       toast.success('Sub-pillars generated successfully');
     });
 

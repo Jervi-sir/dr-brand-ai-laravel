@@ -16,6 +16,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('dr-admin')->name('admi
     Route::resource('api-tokens', ApiTokenController::class);
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::post('/users/{user}/unapprove', [UserController::class, 'unapprove'])->name('users.unapprove');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/ai-usage', [AiUsageController::class, 'index'])->name('ai-usage.index');

@@ -7,6 +7,15 @@ server {
     listen 80;
     server_name dr-ai.jervi.dev;
 
+    # ── Security Headers ─────────────────────────────────────────
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none';" always;
+    # ─────────────────────────────────────────────────────────────
+
     # Block common WordPress attack paths
     location ~* ^/(wp-admin|wp-login.php|wp-content|wp-includes|wp-json|wp-cron.php|wp-config.php|cgi-bin|xmrlpc.php) {
         return 403;
@@ -60,3 +69,6 @@ sudo nginx -t
 sudo systemctl restart nginx
 sudo certbot --nginx -d dr-ai.jervi.dev
 sudo nano /etc/nginx/sites-available/dr-ai.jervi.dev
+
+
+https://securityheaders.com/

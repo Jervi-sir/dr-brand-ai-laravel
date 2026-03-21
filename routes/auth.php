@@ -17,5 +17,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('api/auth/status', function (\Illuminate\Http\Request $request) {
+        return response()->json([
+            'is_verified' => (bool) $request->user()->is_verified,
+        ]);
+    });
+
+    Route::inertia('unverified', 'auth/unverified')->name('unverified');
     Route::post('logout', [LogoutController::class, 'destroy'])->name('logout');
 });

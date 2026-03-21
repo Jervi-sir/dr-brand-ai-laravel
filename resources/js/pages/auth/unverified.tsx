@@ -1,0 +1,93 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ShieldAlert, RefreshCcw, LogOut } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import AppLayout from '@/layouts/app-layout';
+
+export default function Unverified() {
+  const { auth } = usePage<any>().props;
+  const [checking, setChecking] = useState(false);
+
+  const checkStatus = async (silent = false) => {
+    setChecking(true);
+    try {
+      const response = await fetch('/api/auth/status');
+      const data = await response.json();
+
+      if (data.is_verified) {
+        toast.success('Your account is verified! Refreshing access...');
+        router.reload({
+          onSuccess: () => {
+            router.visit('/');
+          }
+        });
+      } else if (!silent) {
+        toast.info('Account still pending verification.');
+      }
+    } catch (error) {
+      if (!silent) {
+        toast.error('Failed to check status.');
+      }
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  // Auto-check on mount
+  useEffect(() => {
+    if (auth.user) {
+      checkStatus(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    router.post(route('logout'));
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <Card className="max-w-md w-full border-primary/20 shadow-lg">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="p-3 bg-primary/10 rounded-full">
+              <ShieldAlert className="w-10 h-10 text-primary" />
+            </div>
+          </div>
+          <CardTitle className="text-2xl font-bold">Verification Required</CardTitle>
+          <CardDescription className="text-muted-foreground mt-2">
+            Your account is currently pending verification. To ensure the security and quality of our platform, we manually review all new access requests.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            This process typically takes 24-48 hours. You will receive access once an administrator has verified your account.
+          </p>
+          <div className="p-4 bg-muted rounded-lg text-xs text-left">
+            <h4 className="font-semibold mb-1 text-foreground">Why do I need verification?</h4>
+            <p>Verification helps us prevent spam and maintain a high standard of service for all our users. We appreciate your patience!</p>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-3">
+          <Button
+            onClick={() => checkStatus(false)}
+            disabled={checking}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            {checking ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
+            Check Status
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}

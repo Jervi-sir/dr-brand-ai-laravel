@@ -63,3 +63,4 @@ sudo systemctl restart nginx
 sudo certbot --nginx -d dr-ai-reverb.jervi.dev 
 sudo nano /etc/nginx/sites-available/dr-ai-reverb.jervi.dev
 
+https://securityheaders.com/

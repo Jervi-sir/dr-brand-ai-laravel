@@ -35,6 +35,13 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'User approved successfully.');
     }
 
+    public function unapprove(User $user)
+    {
+        $user->update(['is_verified' => false]);
+
+        return redirect()->back()->with('success', 'User unapproved successfully.');
+    }
+
     public function destroy(User $user)
     {
         $user->delete();

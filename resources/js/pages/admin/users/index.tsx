@@ -40,11 +40,17 @@ export default function UsersIndex({ users, filters }: Props) {
     });
   };
 
+  const handleUnapprove = (id: number) => {
+    router.post(UsersRoutes.unapprove(id).url, {}, {
+      onSuccess: () => toast.success('User unapproved successfully'),
+    });
+  };
+
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       // Wayfinder might not have auto-generated the TS for the new DELETE route yet in the exact way I expect
       // but wayfinder:generate was run. Let's try to use the route name if possible or just use router.delete directly.
-      router.delete(`/dr-admin/users/${id}`, {
+      router.delete(UsersRoutes.destroy(id).url, {
         onSuccess: () => toast.success('User deleted successfully'),
       });
     }
@@ -95,7 +101,15 @@ export default function UsersIndex({ users, filters }: Props) {
                       {new Date(user.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="space-x-2 text-right">
-                      {!user.is_verified && (
+                      {user.is_verified ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleUnapprove(user.id)}
+                        >
+                          Unapprove
+                        </Button>
+                      ) : (
                         <Button
                           variant="outline"
                           size="sm"

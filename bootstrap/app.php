@@ -25,10 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\EnsureUserIsVerified::class,
         ]);
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'verified' => \App\Http\Middleware\EnsureUserIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
